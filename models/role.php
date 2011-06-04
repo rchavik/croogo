@@ -72,5 +72,17 @@ class Role extends AppModel {
         }
     }
 
+    public function afterSave($created) {
+        $parent = $this->parentNode();
+        $parent = $this->node($parent);
+        $node = $this->node();
+        $aro = $node[0];
+        $aro['Aro']['alias'] = $this->data['Role']['alias'];
+        if (!empty($parent['Aro']['foreign_key'])) {
+            $aro['Aro']['parent_id'] = $parent['Aro']['foreign_key'];
+        }
+        $this->Aro->save($aro);
+    }
+
 }
 ?>
