@@ -49,7 +49,13 @@ class TranslateController extends TranslateAppController {
             ));
         }
 
-        $model =& ClassRegistry::init($modelAlias);
+        $modelConfig = Configure::read('Translate.models.' . $modelAlias);
+        if (isset($modelConfig['with'])) {
+            $model =& ClassRegistry::init($modelConfig['with']);
+            $modelAlias = $model->alias;
+        } else {
+            $model =& ClassRegistry::init($modelAlias);
+        }
         $record = $model->findById($id);
         if (!isset($record[$modelAlias]['id'])) {
             $this->Session->setFlash(__('Invalid record.', true), 'default', array('class' => 'error'));
@@ -108,7 +114,13 @@ class TranslateController extends TranslateAppController {
             ));
         }
 
-        $model =& ClassRegistry::init($modelAlias);
+        $modelConfig = Configure::read('Translate.models.' . $modelAlias);
+        if (isset($modelConfig['with'])) {
+            $model =& ClassRegistry::init($modelConfig['with']);
+            $modelAlias = $model->alias;
+        } else {
+            $model =& ClassRegistry::init($modelAlias);
+        }
         $record = $model->findById($id);
         if (!isset($record[$modelAlias]['id'])) {
             $this->Session->setFlash(__('Invalid record.', true), 'default', array('class' => 'error'));

@@ -101,10 +101,11 @@ class CroogoTranslateBehavior extends ModelBehavior {
  * @access public
  */
     public function getTranslationFields(&$model) {
+        $exclude = array('with');
         if (Set::numeric(array_keys($this->translationFields[$model->alias]))) {
-            return $this->translationFields[$model->alias];
+            return array_diff($this->translationFields[$model->alias], $exclude);
         } else {
-            return array_keys($this->translationFields[$model->alias]);
+            return array_diff(array_keys($this->translationFields[$model->alias]), $exclude);
         }
     }
 /**
