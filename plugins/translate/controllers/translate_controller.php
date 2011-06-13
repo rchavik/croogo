@@ -67,7 +67,7 @@ class TranslateController extends TranslateAppController {
             'conditions' => array(
                 $runtimeModelAlias.'.model' => $modelAlias,
                 $runtimeModelAlias.'.foreign_key' => $id,
-                $runtimeModelAlias.'.field' => 'title',
+                $runtimeModelAlias.'.field' => $model->displayField,
             ),
         ));
 
