@@ -26,8 +26,8 @@ class AclUpgradeComponent extends Object {
 			$root = $root[0];
 		}
 
-		$errors = array();
 		$Aco->begin();
+		$errors = $this->update_role_hierarchy();
 		foreach ($this->__acosToMove as $plugin => $controllers) {
 			$pluginPath = $actionPath . $plugin;
 			$pluginNode = $Aco->node($pluginPath);
@@ -65,6 +65,30 @@ class AclUpgradeComponent extends Object {
 		return true;
 	}
 
-}
+	function update_role_hierarchy() {
+		$controller = $this->controller;
+		$Aro =& $controller->Acl->Aro;
+		$errors = array();
 
-?>
+		$admin = $Aro->node(array('model' => 'Role', 'foreign_key' => 1));
+		$registered = $Aro->node(array('model' => 'Role', 'foreign_key' => 2));
+		$public = $Aro->node(array('model' => 'Role', 'foreign_key' => 3));
+
+		if (empty($public)) {
+			$errors[] = __('Role: Public not found', true);
+		}
+		if ($registered) {
+			$registered[0]['Aro']['parent_id'] = $public[0]['Aro']['id'];
+			$Aro->save($registered[0]);
+		} else {
+			$errors[] = __('Role: Registered not found', true);
+		}
+		if ($admin) {
+			$admin[0]['Aro']['parent_id'] = $registered[0]['Aro']['id'];
+			$Aro->save($admin[0]);
+		} else {
+			$errors[] = __('Role: Admin not found', true);
+		}
+		return array();
+	}
+}
