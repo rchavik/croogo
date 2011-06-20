@@ -38,6 +38,7 @@ class AclUpgradeComponent extends Object {
 					'alias' => $plugin,
 					));
 				$pluginNode = $Aco->save();
+				$pluginNode['Aco']['id'] = $Aco->id;
 			} else {
 				$pluginNode = $pluginNode[0];
 			}
