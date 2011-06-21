@@ -66,12 +66,10 @@ class AclFilterComponent extends Object {
             // Role: Admin
             $this->controller->Auth->allowedActions = array('*');
         } else {
-            $permKey = $this->controller->Auth->sessionKey . '.Permission';
-            if ($this->controller->Session->check($permKey)) {
-                $permissions = $this->controller->Session->read($permKey);
-            } else {
+            $cacheName = 'permissions_' . strval($user['User']['id']);
+            if (($permissions = Cache::read($cacheName, 'permissions')) === false) {
                 $permissions = $this->getPermissions();
-                $this->controller->Session->write($permKey, $permissions);
+                Cache::write($cacheName, $permissions, 'permissions');
             }
 
             if (!empty($user['User']['id'])) {
