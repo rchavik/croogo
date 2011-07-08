@@ -30,15 +30,15 @@ class AclFilterComponent extends Component {
  */
     public function auth() {
         //Configure AuthComponent
+        $userScope = array('User.status' => 1);
+        $userScope = Set::merge($userScope, Configure::read('Acl.Auth.userScope'));
         $this->controller->Auth->authenticate = array(
             AuthComponent::ALL => array(
                 'userModel' => 'User',
                 'fields' => array(
                     'username' => 'username',
                     ),
-                'scope' => array(
-                    'User.status' => 1,
-                    ),
+                'scope' => $userScope,
                 ),
             'Form',
             );
@@ -48,20 +48,23 @@ class AclFilterComponent extends Component {
             'Actions',
             );
         $this->controller->Auth->loginAction = array(
+
+        $loginAction = array(
             'plugin' => null,
             'controller' => 'users',
             'action' => 'login',
         );
-        $this->controller->Auth->logoutRedirect = array(
-            'plugin' => null,
-            'controller' => 'users',
-            'action' => 'login',
-        );
-        $this->controller->Auth->loginRedirect = array(
+        $loginAction = Set::merge($loginAction, Configure::read('Acl.Auth.loginAction'));
+        $this->controller->Auth->loginAction = $loginAction;
+
+        $loginRedirect = array(
             'plugin' => null,
             'controller' => 'users',
             'action' => 'index',
         );
+        $loginRedirect = Set::merge($loginRedirect, Configure::read('Acl.Auth.loginRedirect'));
+        $this->controller->Auth->loginRedirect = $loginRedirect;
+
 
         if ($this->controller->Auth->user() && $this->controller->Auth->user('role_id') == 1) {
             // Role: Admin
