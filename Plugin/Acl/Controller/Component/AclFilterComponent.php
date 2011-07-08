@@ -37,9 +37,17 @@ class AclFilterComponent extends Component {
         //Configure AuthComponent
         $userScope = array('User.status' => 1);
         $userScope = Set::merge($userScope, Configure::read('Acl.Auth.userScope'));
+
+        $userModel = Configure::read('Acl.Auth.userModel');
+        if (empty($userModel)) {
+            $userModel = 'User';
+            Configure::write('Acl.Auth.userModel', $userModel);
+        }
+
+        $this->controller->Auth->userModel = $userModel;
         $this->controller->Auth->authenticate = array(
             AuthComponent::ALL => array(
-                'userModel' => 'User',
+                'userModel' => $userModel,
                 'fields' => array(
                     'username' => 'username',
                     ),
