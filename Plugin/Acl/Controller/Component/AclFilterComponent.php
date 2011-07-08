@@ -65,6 +65,9 @@ class AclFilterComponent extends Component {
         $loginRedirect = Set::merge($loginRedirect, Configure::read('Acl.Auth.loginRedirect'));
         $this->controller->Auth->loginRedirect = $loginRedirect;
 
+        if ($authError = Configure::read('Acl.Auth.authError')) {
+            $this->controller->authError = $authError;
+        }
 
         if ($this->controller->Auth->user() && $this->controller->Auth->user('role_id') == 1) {
             // Role: Admin
