@@ -63,12 +63,14 @@ class AclFilterComponent extends Component {
         }
         $this->controller->Auth->loginAction = $loginAction;
 
-        $loginRedirect = array(
-            'plugin' => null,
-            'controller' => 'users',
-            'action' => 'index',
-        );
-        $loginRedirect = Set::merge($loginRedirect, Configure::read('Acl.Auth.loginRedirect'));
+        $loginRedirect = Configure::read('Acl.Auth.loginRedirect');
+        if (empty($loginRedirect)) {
+            $loginRedirect = array(
+                'plugin' => null,
+                'controller' => 'users',
+                'action' => 'index',
+                );
+        }
         $this->controller->Auth->loginRedirect = $loginRedirect;
 
         if ($authError = Configure::read('Acl.Auth.authError')) {
