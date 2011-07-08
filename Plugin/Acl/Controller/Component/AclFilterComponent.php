@@ -24,11 +24,16 @@ class AclFilterComponent extends Component {
     }
 
 /**
- * acl and auth
- *
- * @return void
+ * Configure Auth component
+ * Auth settings can be configured using Acl.Auth keys.
+ * Currently, the following settings are applicable:
+ *   - loginAction
+ *   - loginRedirect
+ *   - scope
+ *   - authError
+ *   - fields
  */
-    public function auth() {
+    protected function _setupAuth() {
         //Configure AuthComponent
         $userScope = array('User.status' => 1);
         $userScope = Set::merge($userScope, Configure::read('Acl.Auth.userScope'));
@@ -47,7 +52,6 @@ class AclFilterComponent extends Component {
             AuthComponent::ALL => array('actionPath' => $actionPath),
             'Actions',
             );
-        $this->controller->Auth->loginAction = array(
 
         $loginAction = array(
             'plugin' => null,
@@ -70,6 +74,16 @@ class AclFilterComponent extends Component {
         if ($authError = Configure::read('Acl.Auth.authError')) {
             $this->controller->authError = $authError;
         }
+
+    }
+
+/**
+ * acl and auth
+ *
+ * @return void
+ */
+    public function auth() {
+        $this->_setupAuth();
 
         if ($this->controller->Auth->user() && $this->controller->Auth->user('role_id') == 1) {
             // Role: Admin
