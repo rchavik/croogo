@@ -44,13 +44,18 @@ class AclFilterComponent extends Component {
             Configure::write('Acl.Auth.userModel', $userModel);
         }
 
+        $fields = Configure::read('Acl.Auth.fields');
+        if (empty($fields)) {
+            $fields = array('username' => 'username', 'password' => 'password');
+            Configure::write('Acl.Auth.fields', $fields);
+        }
+        $this->controller->Auth->fields = $fields;
+
         $this->controller->Auth->userModel = $userModel;
         $this->controller->Auth->authenticate = array(
             AuthComponent::ALL => array(
                 'userModel' => $userModel,
-                'fields' => array(
-                    'username' => 'username',
-                    ),
+                'fields' => $fields,
                 'scope' => $userScope,
                 ),
             'Form',
