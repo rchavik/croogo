@@ -54,7 +54,9 @@ class AclFilterComponent extends Component {
             'controller' => 'users',
             'action' => 'login',
         );
-        $loginAction = Set::merge($loginAction, Configure::read('Acl.Auth.loginAction'));
+        if (!isset($this->controller->params['admin'])) {
+            $loginAction = Set::merge($loginAction, Configure::read('Acl.Auth.loginAction'));
+        }
         $this->controller->Auth->loginAction = $loginAction;
 
         $loginRedirect = array(
