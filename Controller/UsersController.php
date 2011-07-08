@@ -285,6 +285,10 @@ class UsersController extends AppController {
                 $this->redirect($this->Auth->loginAction);
             }
         }
+        $fields = $this->Auth->fields;
+        $userModel = $this->Auth->userModel;
+        $loginAction = $this->Auth->loginAction;
+        $this->set(compact('fields', 'userModel', 'loginAction'));
     }
 
     public function logout() {
