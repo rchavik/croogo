@@ -73,6 +73,7 @@ class AclFilterComponent extends Component {
         );
         if (!isset($this->controller->params['admin'])) {
             $loginAction = Set::merge($loginAction, Configure::read('Acl.Auth.loginAction'));
+            Configure::write('Acl.Auth.loginAction', $loginAction);
         }
         $this->controller->Auth->loginAction = $loginAction;
 
@@ -83,6 +84,7 @@ class AclFilterComponent extends Component {
                 'controller' => 'users',
                 'action' => 'index',
                 );
+            Configure::write('Acl.Auth.loginRedirect', $loginRedirect);
         }
         $this->controller->Auth->loginRedirect = $loginRedirect;
 
