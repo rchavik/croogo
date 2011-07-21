@@ -89,7 +89,7 @@ class AclFilterComponent extends Component {
         $this->controller->Auth->loginRedirect = $loginRedirect;
 
         if ($authError = Configure::read('Acl.Auth.authError')) {
-            $this->controller->authError = $authError;
+            $this->controller->Auth->authError = $authError;
         }
 
     }
