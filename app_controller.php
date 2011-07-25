@@ -139,5 +139,15 @@ class AppController extends Controller {
         $this->cakeError('securityError');
     }
 
+/**
+ * isAuthorized for Auth/ACL
+ * @see AclFilter::auth()
+ * @see AclFilter::getPermissions()
+ * @return bool
+ */
+    function isAuthorized() {
+        return in_array($this->Auth->action(), $this->AclFilter->authorized);
+    }
+
 }
 ?>
