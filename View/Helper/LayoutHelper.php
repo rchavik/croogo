@@ -653,8 +653,16 @@ class LayoutHelper extends AppHelper {
                 if ($output != '') {
                     $output .= ' ';
                 }
-                $link = $this->linkStringToArray(str_replace(':id', $id, $link));
-                $output .= $this->Html->link($title, $link);
+                if (is_string($link)) {
+                    $links = array($link);
+                } else {
+                    $links = $link;
+                }
+                foreach ($links as $link => $option) {
+                    $option = Set::merge(array(), $option);
+                    $link = $this->linkStringToArray(str_replace(':id', $id, $link));
+                    $output .= $this->Html->link($title, $link, $option);
+                }
             }
         }
         return $output;
