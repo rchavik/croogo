@@ -122,15 +122,17 @@ class LayoutHelper extends AppHelper {
 /**
  * Show flash message
  *
- * @return void
+ * @return string
  */
     public function sessionFlash() {
         $messages = $this->Session->read('Message');
+        $output = '';
         if( is_array($messages) ) {
             foreach(array_keys($messages) AS $key) {
-                echo $this->Session->flash($key);
+                $output .= $this->Session->flash($key);
             }
         }
+        return $output;
     }
 /**
  * Meta tags
@@ -271,7 +273,7 @@ class LayoutHelper extends AppHelper {
                 } else {
                     $blockOutput = $this->View->element($element, array('block' => $block));
                 }
-                $enclosure = isset($block['Params']['enclosure']) ? $block['Params']['enclosure'] === "true" : true;
+                $enclosure = isset($block['Params']['enclosure']) ? $block['Params']['enclosure'] === "true" : false;
                 if ($element != 'block' && $enclosure) {
                     $block['Block']['body'] = $blockOutput;
                     $block['Block']['element'] = null;
@@ -353,6 +355,9 @@ class LayoutHelper extends AppHelper {
             }
 
             if (Router::url($link['Link']['link']) == Router::url('/' . $currentUrl)) {
+                if (!isset($linkAttr['class'])) {
+                    $linkAttr['class'] = '';
+                }
                 $linkAttr['class'] .= ' ' . $options['selected'];
             }
 
