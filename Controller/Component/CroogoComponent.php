@@ -456,7 +456,9 @@ class CroogoComponent extends Component {
  * @param array $allowRoles Role aliases
  * @return void
  */
+
     public function addAco($action, $allowRoles = array()) {
+        $Aco =& $this->controller->Acl->Aco;
         // AROs
         $aroIds = array();
         if (count($allowRoles) > 0) {
@@ -483,25 +485,72 @@ class CroogoComponent extends Component {
             $aroIds = array_keys($aros);
         }
 
+        $actionPath = $this->controller->Auth->authorize[AuthComponent::ALL]['actionPath'];
+        $root = $Aco->node($actionPath);
+        $root = $root[0];
+
         // ACOs
-        $acoNode = $this->controller->Acl->Aco->node($this->controller->Auth->actionPath.$action);
+        $acoNode = $this->controller->Acl->Aco->node($actionPath.'/'.$action);
         if (!isset($acoNode['0']['Aco']['id'])) {
-            if (!strstr($action, '/')) {
-                $parentNode = $this->controller->Acl->Aco->node(str_replace('/', '', $this->controller->Auth->actionPath));
-                $alias = $action;
-            } else {
-                $actionE = explode('/', $action);
-                $controllerName = $actionE['0'];
-                $method = $actionE['1'];
-                $alias = $method;
-                $parentNode = $this->controller->Acl->Aco->node($this->controller->Auth->actionPath.$controllerName);
+            $actionName = false;
+            switch (substr_count($action, '/')) {
+            case 0:
+                list($controllerName) = explode('/', $action);
+                $parentPath = str_replace('/', '', $this->controller->Auth->actionPath);
+            break;
+            case 1:
+                list($controllerName, $actionName) = explode('/', $action);
+                $parentPath = $controllerName;
+            break;
+			case 2:
+                list($pluginName, $controllerName, $actionName) = explode('/', $action);
+                $parentPath = $pluginName . '/' . $controllerName;
+            break;
+            default:
+                die('wtf?');
+            break;
             }
-            $parentId = $parentNode['0']['Aco']['id'];
+            $parentPath = $this->controller->Auth->actionPath . $parentPath;
+
+            if (isset($pluginName)) {
+				// get or create plugin ACO
+                $pluginNode = $Aco->node($actionPath . '/' . $pluginName);
+                if (!$pluginNode) {
+                    $Aco->create(array(
+                        'parent_id' => $root['Aco']['id'],
+                        'model' => null,
+                        'alias' => $pluginName,
+                    ));
+                    $pluginNode = $Aco->save();
+                    $pluginNode['Aco']['id'] = $Aco->id;
+                } else {
+                    $pluginNode = $pluginNode[0];
+                }
+
+				// get or create plugin's controller ACO
+                $controllerNode = $Aco->node($actionPath . '/' . $pluginName . '/' . $controllerName);
+                if (!$controllerNode) {
+                    $Aco->create(array(
+                        'parent_id' => $pluginNode['Aco']['id'],
+                        'model' => null,
+                        'alias' => $controllerName,
+                    ));
+                    $parentNode = $Aco->save();
+                    $parentNode['Aco']['id'] = $Aco->id;
+                } else {
+                    $parentNode = $controllerNode[0];
+                }
+            } else {
+                $parentNode = $Aco->node($parentPath);
+                $parentNode = $parentNode[0];
+            }
+
+            $parentId = $parentNode['Aco']['id'];
             $acoData = array(
                 'parent_id' => $parentId,
                 'model' => null,
                 'foreign_key' => null,
-                'alias' => $alias,
+                'alias' => $actionName,
             );
             $this->controller->Acl->Aco->id = false;
             $this->controller->Acl->Aco->save($acoData);
@@ -674,7 +723,7 @@ class CroogoComponent extends Component {
             foreach ($themeFolders['0'] AS $themeFolder) {
                 $this->folder->path = $viewPath . 'Themed' . DS . $themeFolder . DS . 'webroot';
                 $themeFolderContent = $this->folder->read();
-                if (in_array('theme.yml', $themeFolderContent['1'])) {
+                if (in_array('manifest.php', $themeFolderContent['1'])) {
                     $themes[$themeFolder] = $themeFolder;
                 }
             }
@@ -682,27 +731,36 @@ class CroogoComponent extends Component {
         return $themes;
     }
 /**
- * Get the content of theme.yml file
+ * Get the content of manifest.php file from a theme
  *
  * @param string $alias theme folder name
  * @return array
  */
     public function getThemeData($alias = null) {
         if ($alias == null || $alias == 'default') {
-            $ymlLocation = WWW_ROOT . 'theme.yml';
+            $manifestFile = WWW_ROOT . 'manifest.php';
         } else {
             $viewPaths = App::path('views');
             foreach ($viewPaths AS $viewPath) {
-                if (file_exists($viewPath . 'Themed' . DS . $alias . DS . 'webroot' . DS . 'theme.yml')) {
-                    $ymlLocation = $viewPath . 'Themed' . DS . $alias . DS . 'webroot' . DS . 'theme.yml';
+                if (file_exists($viewPath . 'Themed' . DS . $alias . DS . 'webroot' . DS . 'manifest.php')) {
+                    $manifestFile = $viewPath . 'Themed' . DS . $alias . DS . 'webroot' . DS . 'manifest.php';
                     continue;
                 }
             }
-            if (!isset($ymlLocation)) {
-                $ymlLocation = WWW_ROOT . 'theme.yml';
+            if (!isset($manifestFile)) {
+                $manifestFile = WWW_ROOT . 'manifest.php';
             }
         }
-        $themeData = Spyc::YAMLLoad(file_get_contents($ymlLocation));
+        if (isset($manifestFile) && file_exists($manifestFile)) {
+            include $manifestFile;
+            if (isset($themeManifest)) {
+                $themeData = $themeManifest;
+            } else {
+                $themeData = array();
+            }
+        } else {
+            $themeData = array();
+        }
         return $themeData;
     }
 /**
@@ -723,7 +781,7 @@ class CroogoComponent extends Component {
                     $this->folder->path = $pluginPath . $pluginFolder . DS . 'Config';
                     if (!file_exists($this->folder->path)) { continue; }
                     $pluginFolderContent = $this->folder->read();
-                    if (in_array('plugin.yml', $pluginFolderContent[1])) {
+                    if (in_array('manifest.php', $pluginFolderContent[1])) {
                         $plugins[$pluginFolder] = $pluginFolder;
                     }
                 }
@@ -732,7 +790,7 @@ class CroogoComponent extends Component {
         return $plugins;
     }
 /**
- * Get the content of plugin.yml file
+ * Get the content of manifest.php file of a plugin
  *
  * @param string $alias plugin folder name
  * @return array
@@ -740,10 +798,16 @@ class CroogoComponent extends Component {
     public function getPluginData($alias = null) {
         $pluginPaths = App::path('plugins');
         foreach ($pluginPaths AS $pluginPath) {
-            $ymlLocation = $pluginPath . $alias . DS . 'Config' . DS . 'plugin.yml';
-            if (file_exists($ymlLocation)) {
-                $pluginData = Spyc::YAMLLoad(file_get_contents($ymlLocation));
-                $pluginData['active'] = $this->pluginIsActive($alias);
+            $manifestFile = $pluginPath . $alias . DS . 'Config' . DS . 'manifest.php';
+            if (file_exists($manifestFile)) {
+                include $manifestFile;
+                if (isset($pluginManifest)) {
+                    $pluginData = $pluginManifest;
+                    $pluginData['active'] = $this->pluginIsActive($alias);
+                    unset($pluginManifest);
+                } else {
+                    $pluginData = array();
+                }
                 return $pluginData;
             }
         }
