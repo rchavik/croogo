@@ -748,12 +748,13 @@ class CroogoComponent extends Component {
  */
     public function getPluginData($alias = null) {
         $pluginPaths = App::path('plugins');
+        $defaults = array('name' => '', 'description' => '', 'author' => '');
         foreach ($pluginPaths AS $pluginPath) {
             $manifestFile = $pluginPath . $alias . DS . 'Config' . DS . 'manifest.php';
             if (file_exists($manifestFile)) {
                 include $manifestFile;
                 if (isset($pluginManifest)) {
-                    $pluginData = $pluginManifest;
+                    $pluginData = Set::merge($defaults, $pluginManifest);
                     $pluginData['active'] = $this->pluginIsActive($alias);
                     unset($pluginManifest);
                 } else {
