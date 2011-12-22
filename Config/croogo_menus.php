@@ -188,7 +188,7 @@ CroogoNav::add('blocks', array(
 				'plugin' => false,
 				'admin' => true,
 				'controller' => 'regions',
-				'action' => 'add',
+				'action' => 'index',
 				),
 			'access' => array('admin'),
 			),

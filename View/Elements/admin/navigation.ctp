@@ -8,8 +8,8 @@ foreach ($types_for_admin_layout as $t):
             'plugin' => false,
             'admin' => true,
             'controller' => 'nodes',
-            'action' => 'create',
-            'type' => $t['Type']['alias'],
+            'action' => 'add',
+            $t['Type']['alias'],
             ),
         ));
 endforeach;
