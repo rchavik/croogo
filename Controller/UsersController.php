@@ -150,8 +150,11 @@ class UsersController extends AppController {
                 $this->redirect($this->Auth->loginAction);
             }
         }
-        $fields = $this->Auth->fields;
-        $userModel = $this->Auth->userModel;
+        $fields = Set::merge(array(
+            'username' => 'username',
+            'password' => 'password',
+            ), $this->Auth->authenticate['all']['fields']);
+        $userModel = $this->Auth->authenticate['all']['userModel'];
         $loginAction = $this->Auth->loginAction;
         $this->set(compact('fields', 'userModel', 'loginAction'));
     }
