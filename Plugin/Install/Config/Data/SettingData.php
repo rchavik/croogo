@@ -257,6 +257,19 @@ class SettingData {
 			'weight' => '23',
 			'params' => ''
 		),
+
+		array(
+			'id' => '33',
+			'key' => 'Site.acl_plugin',
+			'value' => 'Acl',
+			'title' => '',
+			'description' => 'CamelCased Acl Plugin name to use. Make sure that plugin name is correct and active.',
+			'input_type' => '',
+			'editable' => '0',
+			'weight' => '5',
+			'params' => ''
+		),
+
 	);
 
 }
