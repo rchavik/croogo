@@ -28,7 +28,6 @@ class AppController extends Controller {
         'Security',
         'Acl',
         'Auth',
-        'Acl.AclFilter',
         'Session',
         'RequestHandler',
     );
@@ -95,6 +94,12 @@ class AppController extends Controller {
  * @access public
  */
     public function __construct($request = null, $response = null) {
+        $aclPlugin = Configure::read('Site.acl_plugin');
+        if (empty($aclPlugin)) {
+            $aclPlugin = 'Acl';
+        }
+        $aclFilterComponentPath = $aclPlugin . '.' . $aclPlugin .'Filter';
+        Croogo::hookComponent('*', $aclFilterComponentPath);
         Croogo::applyHookProperties('Hook.controller_properties');
         parent::__construct($request, $response);
         if ($this->name == 'CakeError') {
@@ -111,7 +116,8 @@ class AppController extends Controller {
  */
     public function beforeFilter() {
         parent::beforeFilter();
-        $this->AclFilter->auth();
+        $aclFilterComponent = Configure::read('Site.acl_plugin') . 'Filter';
+        $this->{$aclFilterComponent}->auth();
         $this->RequestHandler->setContent('json', 'text/x-json');
         $this->Security->blackHoleCallback = '__securityError';
 
