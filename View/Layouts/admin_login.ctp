@@ -9,7 +9,8 @@
             '960',
             'admin',
         ));
-        echo $scripts_for_layout;
+        echo $this->Blocks->get('css');
+        echo $this->Blocks->get('script');
     ?>
 </head>
 
@@ -35,6 +36,6 @@
 
     </div>
 
-
+    <?php echo $this->Blocks->get('scriptBottom'); ?>
     </body>
 </html>

@@ -36,7 +36,10 @@ class User extends AppModel {
  * @access public
  */
     public $actsAs = array(
-        'Acl' => array('type' => 'requester'),
+        'Acl' => array(
+            'className' => 'CroogoAcl',
+            'type' => 'requester',
+            ),
     );
 /**
  * Model associations: belongsTo
@@ -85,39 +88,11 @@ class User extends AppModel {
         ),
     );
 
-    public function parentNode() {
-        if (!$this->id && empty($this->data)) {
-            return null;
-        }
-        $data = $this->data;
-        if (empty($this->data)) {
-            $data = $this->read();
-        }
-        if (!isset($data['User']['role_id'])) {
-            $data['User']['role_id'] = $this->field('role_id');
-        }
-        if (!isset($data['User']['role_id']) || !$data['User']['role_id']) {
-            return null;
-        } else {
-            return array('Role' => array('id' => $data['User']['role_id']));
-        }
-    }
-
     public function beforeSave($options = array()) {
         if (!empty($this->data['User']['password'])) {
             $this->data['User']['password'] = AuthComponent::password($this->data['User']['password']);
         }
         return true;
-    }
-
-    public function afterSave($created) {
-        if (empty($this->data['User']['username'])) {
-            return;
-        }
-        $node = $this->node();
-        $aro = $node[0];
-        $aro['Aro']['alias'] = $this->data['User']['username'];
-        $this->Aro->save($aro);
     }
 
     protected function _identical($check) {

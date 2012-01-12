@@ -27,6 +27,7 @@ class Role extends AppModel {
  */
     public $actsAs = array(
         'Acl' => array(
+            'className' => 'CroogoAcl',
             'type' => 'requester',
         ),
     );
@@ -52,25 +53,6 @@ class Role extends AppModel {
             ),
         ),
     );
-
-    public function parentNode() {
-        if (!$this->id && empty($this->data)) {
-            return null;
-        } else {
-            $id = $this->id ? $this->id : $this->data['Role']['id'];
-            $aro = $this->Aro->find('first', array(
-                'conditions' => array(
-                    'model' => $this->alias,
-                    'foreign_key' => $id,
-                    )
-                ));
-            if (empty($aro['Aro']['foreign_key'])) {
-                return null;
-            } else {
-                return array('Role' => array('id' => $aro['Aro']['foreign_key']));
-            }
-        }
-    }
 
 }
 ?>

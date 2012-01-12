@@ -21,4 +21,5 @@ Site.tagline: A CakePHP powered Content Management System.
 Site.theme: 
 Site.timezone: 0
 Site.title: Croogo
+Site.acl_plugin: Acl
 Writing.wysiwyg: 1

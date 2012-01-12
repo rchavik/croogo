@@ -10,21 +10,5 @@ webroot/uploads/
 # Cake cache
 tmp/
 
-plugins/analogue
-plugins/blockanywhere
-plugins/cakeforum
-plugins/debug_kit
-plugins/gallery
-plugins/sites
-plugins/social
-plugins/trackable
-plugins/utils
-plugins/xlcomm
-plugins/acl_extras
-webroot/cakeforum
-webroot/xlcomm
-webroot/gallery
-webroot/social
-webroot/theme
-webroot/ui-themes
-*.bak
+# Others
+.DS_Store
