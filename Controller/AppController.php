@@ -117,6 +117,7 @@ class AppController extends Controller {
     public function beforeFilter() {
         parent::beforeFilter();
         $aclFilterComponent = Configure::read('Site.acl_plugin') . 'Filter';
+        $aclFilterComponent = $aclFilterComponent == 'Filter' ? 'AclFilter' : $aclFilterComponent;
         $this->{$aclFilterComponent}->auth();
         $this->RequestHandler->setContent('json', 'text/x-json');
         $this->Security->blackHoleCallback = '__securityError';
