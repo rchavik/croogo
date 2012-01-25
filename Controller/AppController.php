@@ -94,12 +94,7 @@ class AppController extends Controller {
  * @access public
  */
     public function __construct($request = null, $response = null) {
-        $aclPlugin = Configure::read('Site.acl_plugin');
-        if (!empty($aclPlugin)) {
-            $aclFilterComponentPath = $aclPlugin . '.' . $aclPlugin .'Filter';
-            Croogo::hookComponent('*', $aclFilterComponentPath);
-            Croogo::applyHookProperties('Hook.controller_properties');
-        }
+        Croogo::applyHookProperties('Hook.controller_properties');
         parent::__construct($request, $response);
         if ($this->name == 'CakeError') {
             $this->_set(Router::getPaths());
