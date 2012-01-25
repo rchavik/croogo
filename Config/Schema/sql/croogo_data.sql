@@ -374,8 +374,7 @@ INSERT IGNORE INTO `settings` (`id`, `key`, `value`, `title`, `description`, `in
 (27, 'Reading.date_time_format', 'D, M d Y H:i:s', '', '', '', 1, 21, ''),
 (28, 'Comment.date_time_format', 'M d, Y', '', '', '', 1, 22, ''),
 (29, 'Site.timezone', '0', '', 'zero (0) for GMT', '', 1, 4, ''),
-(32, 'Hook.bootstraps', 'Acl', '', '', '', 0, 23, ''),
-(33, 'Site.acl_plugin', 'Acl', '', 'CamelCased Acl Plugin name to use. Make sure that plugin name is correct and active.', 1, 1, 5, '');
+(32, 'Hook.bootstraps', 'Acl,Tinymce', '', '', '', 0, 23, '');
 
 --
 -- Dumping data for table `taxonomies`
