@@ -75,8 +75,8 @@
         </div>
     </div>
     <?php
-        echo $this->Js->writeBuffer();
         echo $this->Blocks->get('scriptBottom');
+        echo $this->Js->writeBuffer();
     ?>
     </body>
 </html>
