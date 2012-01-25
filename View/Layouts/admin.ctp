@@ -58,7 +58,9 @@
     </div>
 
     <?php echo $this->element('admin/footer'); ?>
-
-    <?php echo $this->Blocks->get('scriptBottom'); ?>
+    <?php
+        echo $this->Js->writeBuffer();
+        echo $this->Blocks->get('scriptBottom');
+    ?>
     </body>
 </html>
