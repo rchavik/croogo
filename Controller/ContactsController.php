@@ -133,7 +133,9 @@ class ContactsController extends AppController {
                 //$this->Session->setFlash(__('Your message has been received.'));
                 //unset($this->request->data['Message']);
 
-                echo $this->flash(__('Your message has been received...'), '/');
+                //echo $this->flash(__('Your message has been received...'), '/');
+                $this->Session->setFlash(__('Your message has been received'), 'default', array('class' => 'success'));
+				$this->redirect('/');
             }
         }
 
@@ -185,18 +187,21 @@ class ContactsController extends AppController {
     }
 
     private function __send_email($continue, $contact) {
+		$email = new CakeEmail();
         if ($contact['Contact']['message_notify'] && $continue === true) {
-            $this->Email->to = $contact['Contact']['email'];
-            $this->Email->from = $this->request->data['Message']['name'] . ' <' . $this->request->data['Message']['email'] . '>';
-            $this->Email->subject = '[' . Configure::read('Site.title') . '] ' . $contact['Contact']['title'];
-            $this->Email->template = 'contact';
+			$email->from($this->request->data['Message']['email'])
+					->to($contact['Contact']['email'])
+					->subject(__('[' . Configure::read('Site.title') . '] ' . $contact['Contact']['title']))
+					->template('contact')
+					->viewVars(array(
+						'contact' => $contact,
+						'message' => $this->request->data,
+					));
+		}
 
-            $this->set('contact', $contact);
-            $this->set('message', $this->request->data);
-            if (!$this->Email->send()) {
-                $continue = false;
-            }
-        }
+		if (!$email->send()) {
+			$continue = false;
+		}
 
         return $continue;
     }
