@@ -72,7 +72,7 @@ class ExtensionsPluginsController extends AppController {
 		if (!empty($this->request->data)) {
 			$file = $this->request->data['Plugin']['file'];
 			unset($this->request->data['Plugin']['file']);
-			
+
 			$Installer = new ExtensionsInstaller;
 			try {
 				$Installer->extractPlugin($file['tmp_name']);
