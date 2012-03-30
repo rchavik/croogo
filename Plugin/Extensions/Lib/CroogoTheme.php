@@ -16,6 +16,13 @@
 class CroogoTheme extends Object {
 
 /**
+ * Constructor
+ */
+	public function __construct() {
+		$this->Setting = ClassRegistry::init('Setting');
+	}
+
+/**
  * Get theme aliases (folder names)
  *
  * @return array
@@ -26,10 +33,10 @@ class CroogoTheme extends Object {
 		);
 		$this->folder = new Folder;
 		$viewPaths = App::path('views');
-		foreach ($viewPaths AS $viewPath) {
+		foreach ($viewPaths as $viewPath) {
 			$this->folder->path = $viewPath . 'Themed';
 			$themeFolders = $this->folder->read();
-			foreach ($themeFolders['0'] AS $themeFolder) {
+			foreach ($themeFolders['0'] as $themeFolder) {
 				$this->folder->path = $viewPath . 'Themed' . DS . $themeFolder . DS . 'webroot';
 				$themeFolderContent = $this->folder->read();
 				if (in_array('theme.json', $themeFolderContent['1'])) {
@@ -46,12 +53,12 @@ class CroogoTheme extends Object {
  * @param string $alias theme folder name
  * @return array
  */
-	public function getThemeData($alias = null) {
+	public function getData($alias = null) {
 		if ($alias == null || $alias == 'default') {
 			$manifestFile = WWW_ROOT . 'theme.json';
 		} else {
 			$viewPaths = App::path('views');
-			foreach ($viewPaths AS $viewPath) {
+			foreach ($viewPaths as $viewPath) {
 				if (file_exists($viewPath . 'Themed' . DS . $alias . DS . 'webroot' . DS . 'theme.json')) {
 					$manifestFile = $viewPath . 'Themed' . DS . $alias . DS . 'webroot' . DS . 'theme.json';
 					continue;
@@ -63,13 +70,36 @@ class CroogoTheme extends Object {
 		}
 		if (isset($manifestFile) && file_exists($manifestFile)) {
 			$themeData = json_decode(file_get_contents($manifestFile), true);
-			if ($themeData == NULL) {
+			if ($themeData == null) {
 				$themeData = array();
 			}
 		} else {
 			$themeData = array();
 		}
 		return $themeData;
+	}
+
+/**
+ * Get the content of theme.json file from a theme
+ *
+ * @param string $alias theme folder name
+ * @return array
+ * @deprecated use getData()
+ */
+	public function getThemeData($alias = null) {
+		return $this->getData($alias);
+	}
+
+/**
+ * Activate theme $alias
+ * @param $alias theme alias
+ * @return mixed On success Setting::$data or true, false on failure
+ */
+	public function activate($alias) {
+		if ($alias == 'default' || $alias == null) {
+			$alias = '';
+		}
+		return $this->Setting->write('Site.theme', $alias);
 	}
 
 }

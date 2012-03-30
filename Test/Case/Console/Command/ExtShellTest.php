@@ -18,6 +18,7 @@ App::uses('Folder', 'Utility');
  * @link     http://www.croogo.org
  */
 class ExtShellTest extends CroogoTestCase {
+
 /**
  * fixtures
  *
@@ -31,6 +32,7 @@ class ExtShellTest extends CroogoTestCase {
 		'app.meta',
 		'app.node',
 		'app.nodes_taxonomy',
+		'app.region',
 		'app.role',
 		'app.setting',
 		'app.taxonomy',
@@ -39,9 +41,9 @@ class ExtShellTest extends CroogoTestCase {
 		'app.types_vocabulary',
 		'app.user',
 		'app.vocabulary',
-		'app.aros',
-		'app.acos',
-		'app.aros_acos',
+		'app.aro',
+		'app.aco',
+		'app.aros_aco',
 	);
 
 /**
@@ -51,12 +53,10 @@ class ExtShellTest extends CroogoTestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		App::build(array(
-			'Plugin' => array(TESTS . 'test_app' . DS . 'Plugin' . DS),
-			'View' => array(TESTS . 'test_app' . DS . 'View' . DS),
-		), App::PREPEND);
 		$Folder = new Folder(APP . 'Plugin' . DS . 'Example');
 		$Folder->copy(TESTS . 'test_app' . DS . 'Plugin' . DS . 'Example');
+		$this->Setting = ClassRegistry::init('Setting');
+		$this->Setting->settingsPath = TESTS . 'test_app' . DS . 'Config' . DS . 'settings.yml';
 	}
 
 /**
@@ -76,23 +76,28 @@ class ExtShellTest extends CroogoTestCase {
  * @return void
  */
 	public function testPlugin() {
-		$Setting = ClassRegistry::init('Setting');
 		$Link = ClassRegistry::init('Link');
 		$Shell = new ExtShell();
 
 		$Shell->args = array('deactivate', 'plugin', 'Example');
 		$Shell->main();
-		$result = $Setting->findByKey('Hook.bootstraps');
-		$this->assertFalse(in_array('example', explode(',', $result['Setting']['value'])));
+		$result = $this->Setting->findByKey('Hook.bootstraps');
+		$this->assertFalse(in_array('Example', explode(',', $result['Setting']['value'])));
 		$result = $Link->findByTitle('Example');
 		$this->assertFalse(!empty($result));
 
 		$Shell->args = array('activate', 'plugin', 'Example');
 		$Shell->main();
-		$result = $Setting->findByKey('Hook.bootstraps');
-		$this->assertTrue(in_array('example', explode(',', $result['Setting']['value'])));
+		$result = $this->Setting->findByKey('Hook.bootstraps');
+		$this->assertTrue(in_array('Example', explode(',', $result['Setting']['value'])));
 		$result = $Link->findByTitle('Example');
 		$this->assertTrue(!empty($result));
+
+		$bogusPlugin = 'Bogus';
+		$Shell->args = array('activate', 'plugin', $bogusPlugin);
+		$Shell->main();
+		$result = $this->Setting->findByKey('Hook.bootstraps');
+		$this->assertFalse(in_array($bogusPlugin, explode(',', $result['Setting']['value'])));
 	}
 
 /**
@@ -101,26 +106,32 @@ class ExtShellTest extends CroogoTestCase {
  * @return void
  */
 	public function testTheme() {
-		$Setting = ClassRegistry::init('Setting');
+		$Shell = new ExtShell();
+		$Shell->args = array('activate', 'theme', 'Mytheme');
+		$Shell->main();
+		$result = $this->Setting->findByKey('Site.theme');
+		$this->assertEquals('Mytheme', $result['Setting']['value']);
+		$this->assertEquals('Mytheme', Configure::read('Site.theme'));
 
 		$Shell = new ExtShell();
-		$Shell->args = array('activate', 'theme', 'minimal');
+		$Shell->args = array('activate', 'theme', 'Bogus');
 		$Shell->main();
-		$result = $Setting->findByKey('Site.theme');
-		$this->assertEquals('minimal', $result['Setting']['value']);
+		$result = $this->Setting->findByKey('Site.theme');
+		$this->assertEquals('Mytheme', $result['Setting']['value']);
+		$this->assertEquals('Mytheme', Configure::read('Site.theme'));
 
 		$Shell = new ExtShell();
 		$Shell->args = array('deactivate', 'theme');
 		$Shell->main();
-		$result = $Setting->findByKey('Site.theme');
+		$result = $this->Setting->findByKey('Site.theme');
 		$this->assertEquals('', $result['Setting']['value']);
 
 		$Shell = new ExtShell();
-		$Shell->args = array('activate', 'theme', 'minimal');
+		$Shell->args = array('activate', 'theme', 'Mytheme');
 		$Shell->main();
 		$Shell->args = array('activate', 'theme', 'default');
 		$Shell->main();
-		$result = $Setting->findByKey('Site.theme');
+		$result = $this->Setting->findByKey('Site.theme');
 		$this->assertEquals('', $result['Setting']['value']);
 	}
 }

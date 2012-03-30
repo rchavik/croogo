@@ -2,8 +2,8 @@
 
 App::uses('File', 'Utility');
 App::uses('Folder', 'Utility');
-App::uses('CroogoPlugin', 'Lib');
-App::uses('CroogoTheme', 'Lib');
+App::uses('CroogoPlugin', 'Extensions.Lib');
+App::uses('CroogoTheme', 'Extensions.Lib');
 
 /**
  * Croogo Component
@@ -109,6 +109,9 @@ class CroogoComponent extends Component {
 				if (!isset($this->{$name})) {
 					$class = substr($name, 1);
 					$this->{$name} = new $class();
+					if (method_exists($this->{$name}, 'setController')) {
+						$this->{$name}->setController($this->controller);
+					}
 				}
 				return $this->{$name};
 			break;
@@ -536,10 +539,10 @@ class CroogoComponent extends Component {
  *
  * @param string $plugin Plugin name (underscored)
  * @return void
- * @deprecated use CroogoPlugin::addPluginBootstrap()
+ * @deprecated use CroogoPlugin::addBootstrap()
  */
 	public function addPluginBootstrap($plugin) {
-		$this->_CroogoPlugin->addPluginBootstrap($plugin);
+		$this->_CroogoPlugin->addBootstrap($plugin);
 	}
 
 /**
@@ -547,10 +550,10 @@ class CroogoComponent extends Component {
  *
  * @param string $plugin Plugin name (underscored)
  * @return void
- * @deprecated use CroogoPlugin::removePluginBootstrap()
+ * @deprecated use CroogoPlugin::removeBootstrap()
  */
 	public function removePluginBootstrap($plugin) {
-		$this->_CroogoPlugin->removePluginBootstrap($plugin);
+		$this->_CroogoPlugin->removeBootstrap($plugin);
 	}
 
 /**
@@ -613,10 +616,10 @@ class CroogoComponent extends Component {
  *
  * @param string $alias theme folder name
  * @return array
- * @deprecated use CroogoTheme::getThemeData()
+ * @deprecated use CroogoTheme::getData()
  */
 	public function getThemeData($alias = null) {
-		return $this->_CroogoTheme->getThemeData($alias);
+		return $this->_CroogoTheme->getData($alias);
 	}
 
 /**
@@ -634,10 +637,10 @@ class CroogoComponent extends Component {
  *
  * @param string $alias plugin folder name
  * @return array
- * @deprecated use CroogoPlugin::getPluginData
+ * @deprecated use CroogoPlugin::getData
  */
 	public function getPluginData($alias = null) {
-		return $this->_CroogoPlugin->getPluginData($alias);
+		return $this->_CroogoPlugin->getData($alias);
 	}
 
 /**
@@ -646,10 +649,10 @@ class CroogoComponent extends Component {
  *
  * @param  string $plugin plugin alias (underscrored)
  * @return boolean
- * @deprecated use CroogoPlugin::checkPluginDependency()
+ * @deprecated use CroogoPlugin::checkDependency()
  */
 	public function checkPluginDependency($plugin = null) {
-		return $this->_CroogoPlugin->checkPluginDependency($plugin);
+		return $this->_CroogoPlugin->checkDependency($plugin);
 	}
 
 /**
@@ -657,10 +660,10 @@ class CroogoComponent extends Component {
  *
  * @param  string $plugin Plugin name (underscored)
  * @return boolean
- * @deprecated use CroogoPlugin::pluginIsActive
+ * @deprecated use CroogoPlugin::isActive
  */
 	public function pluginIsActive($plugin) {
-		$this->_CroogoPlugin->pluginIsActive($plugin);
+		return $this->_CroogoPlugin->isActive($plugin);
 	}
 
 }
