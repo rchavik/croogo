@@ -5,11 +5,6 @@
     Configure::write('Site.acl_plugin', 'Acl');
 
 /**
- * Locale
- */
-	Configure::write('Config.language', 'eng');
-
-/**
  * Admin theme
  */
 	//Configure::write('Site.admin_theme', 'sample');
@@ -67,6 +62,11 @@
 	}
 
 /**
+ * Locale
+ */
+	Configure::write('Config.language', Configure::read('Site.locale'));
+
+/**
  * Plugins
  */
 	$aclPlugin = Configure::read('Site.acl_plugin');
@@ -91,5 +91,6 @@
 				'routes' => $routes,
 				)
 			);
-		CakePlugin::load($option);
+		CroogoPlugin::load($option);
 	}
+	CroogoEventManager::loadListeners();

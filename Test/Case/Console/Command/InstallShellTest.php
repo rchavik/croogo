@@ -4,6 +4,7 @@ App::uses('AppShell', 'Console/Command');
 App::uses('Shell', 'Console');
 App::uses('InstallShell', 'Console/Command');
 App::uses('Folder', 'Utility');
+App::uses('CroogoTestCase', 'TestSuite');
 
 /**
  * TestInstallShell class
@@ -18,6 +19,12 @@ class TestInstallShell extends InstallShell {
  */
 	public function githubUrl($url = null) {
 		return $this->_githubUrl($url);
+	}
+
+	public function out($message = null, $newlines = 1, $level = Shell::NORMAL) {
+	}
+
+	public function err($message = null, $newlines = 1) {
 	}
 
 }
@@ -73,7 +80,7 @@ class InstallShellTest extends CroogoTestCase {
  * @return void
  */
 	public function testInstallPlugin() {
-		$Shell = $this->getMock('InstallShell', array('_shellExec', 'dispatchShell'));
+		$Shell = $this->getMock('InstallShell', array('out', 'err', '_shellExec', 'dispatchShell'));
 		$Shell->expects($this->once())
 			->method('_shellExec')
 			->will($this->returnCallback(array($this, 'callbackDownloadPlugin')));
@@ -91,7 +98,7 @@ class InstallShellTest extends CroogoTestCase {
  * @return void
  */
 	public function testInstallTheme() {
-		$Shell = $this->getMock('InstallShell', array('_shellExec', 'dispatchShell'));
+		$Shell = $this->getMock('InstallShell', array('out', 'err', '_shellExec', 'dispatchShell'));
 		$Shell->expects($this->once())
 			->method('_shellExec')
 			->will($this->returnCallback(array($this, 'callbackDownloadTheme')));

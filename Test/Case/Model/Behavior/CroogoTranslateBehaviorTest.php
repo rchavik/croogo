@@ -1,5 +1,6 @@
 <?php
-App::import('Model', 'Node');
+App::uses('Node', 'Model');
+App::uses('CroogoTestCase', 'TestSuite');
 
 class CroogoTranslateBehaviorTest extends CroogoTestCase {
 
@@ -31,11 +32,28 @@ class CroogoTranslateBehaviorTest extends CroogoTestCase {
 
 	public $Node = null;
 
-	public function startTest($method) {
+/**
+ * setUp
+ *
+ * @return void
+ */
+	public function setUp() {
+		parent::setUp();
 		$this->Node = ClassRegistry::init('Node');
 		$this->Node->Behaviors->attach('CroogoTranslate', array(
 			'title' => 'titleTranslation',
 		));
+	}
+
+/**
+ * tearDown
+ *
+ * @return void
+ */
+	public function tearDown() {
+		parent::tearDown();
+		unset($this->Node);
+		ClassRegistry::flush();
 	}
 
 	public function testSaveTranslation() {
@@ -50,8 +68,4 @@ class CroogoTranslateBehaviorTest extends CroogoTestCase {
 		$this->assertEqual($about['Node']['title'], 'About [Translated in Bengali]');
 	}
 
-	public function endTest($method) {
-		unset($this->Node);
-		ClassRegistry::flush();
-	}
 }

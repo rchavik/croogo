@@ -1,5 +1,7 @@
 <?php
-App::import('Model', 'Type');
+App::uses('Type', 'Model');
+App::uses('CroogoTestCase', 'TestSuite');
+
 class ParamsBehaviorTest extends CroogoTestCase {
 
 	public $fixtures = array(
@@ -30,8 +32,25 @@ class ParamsBehaviorTest extends CroogoTestCase {
 
 	public $Type = null;
 
-	public function startTest($method) {
+/**
+ * setUp
+ *
+ * @return void
+ */
+	public function setUp() {
+		parent::setUp();
 		$this->Type = ClassRegistry::init('Type');
+	}
+
+/**
+ * tearDown
+ *
+ * @return void
+ */
+	public function tearDown() {
+		parent::tearDown();
+		unset($this->Type);
+		ClassRegistry::flush();
 	}
 
 	public function testSingle() {
@@ -63,8 +82,4 @@ class ParamsBehaviorTest extends CroogoTestCase {
 		$this->assertEqual($type['Params'], $expected);
 	}
 
-	public function endTest($method) {
-		unset($this->Type);
-		ClassRegistry::flush();
-	}
 }

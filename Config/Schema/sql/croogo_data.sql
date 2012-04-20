@@ -374,7 +374,8 @@ INSERT IGNORE INTO `settings` (`id`, `key`, `value`, `title`, `description`, `in
 (27, 'Reading.date_time_format', 'D, M d Y H:i:s', '', '', '', 1, 21, ''),
 (28, 'Comment.date_time_format', 'M d, Y', '', '', '', 1, 22, ''),
 (29, 'Site.timezone', '0', '', 'zero (0) for GMT', '', 1, 4, ''),
-(32, 'Hook.bootstraps', 'Tinymce', '', '', '', 0, 23, '');
+(32, 'Hook.bootstraps', 'Tinymce', '', '', '', 0, 23, ''),
+(33, 'Comment.email_notification', '1', 'Enable email notification', '', '', 1, 24, '');
 
 --
 -- Dumping data for table `taxonomies`
@@ -412,13 +413,6 @@ INSERT IGNORE INTO `types_vocabularies` (`id`, `type_id`, `vocabulary_id`, `weig
 (30, 2, 1, NULL),
 (25, 4, 2, NULL),
 (24, 4, 1, NULL);
-
---
--- Dumping data for table `users`
---
-
-INSERT IGNORE INTO `users` (`id`, `role_id`, `username`, `password`, `name`, `email`, `website`, `activation_key`, `image`, `bio`, `timezone`, `status`, `updated`, `created`) VALUES
-(1, 1, 'admin', sha1(rand(now())), 'Administrator', 'you@your-site.com', '/about', '', '', '', '0', 0, '2009-10-07 22:23:27', '2009-04-05 00:20:34');
 
 --
 -- Dumping data for table `vocabularies`

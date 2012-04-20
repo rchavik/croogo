@@ -123,6 +123,7 @@ class AppController extends Controller {
 		$this->{$aclFilterComponent}->auth();
 		$this->RequestHandler->setContent('json', 'text/x-json');
 		$this->Security->blackHoleCallback = '__securityError';
+		$this->Security->requirePost('admin_delete');
 
 		if (isset($this->request->params['admin']) && $this->name != 'CakeError') {
 			$this->layout = 'admin';
@@ -188,7 +189,11 @@ class AppController extends Controller {
 			break;
 		}
 		$this->set(compact('type'));
-		$this->render('../Errors/security');
+		$this->response = $this->render('../Errors/security');
+		$this->response->statusCode(400);
+		$this->response->send();
+		$this->_stop();
+		return false;
 	}
 
 }
