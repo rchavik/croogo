@@ -15,6 +15,7 @@ App::uses('CroogoPlugin', 'Extensions.Lib');
  * @link     http://www.croogo.org
  */
 class ExtensionsPluginsController extends ExtensionsAppController {
+
 /**
  * Controller name
  *
@@ -57,7 +58,7 @@ class ExtensionsPluginsController extends ExtensionsAppController {
 
 		$pluginAliases = $this->_CroogoPlugin->getPlugins();
 		$plugins = array();
-		foreach ($pluginAliases AS $pluginAlias) {
+		foreach ($pluginAliases as $pluginAlias) {
 			$plugins[$pluginAlias] = $this->_CroogoPlugin->getData($pluginAlias);
 		}
 		$this->set('corePlugins', $this->corePlugins);
