@@ -37,7 +37,7 @@ Nodes.filter = function() {
 	$('#FilterAdminIndexForm').submit(function() {
 		var filter = '';
 		var q='';
-		
+
 		// type
 		if ($('#FilterType').val() != '') {
 			filter += 'type:' + $('#FilterType').val() + ';';
@@ -124,6 +124,19 @@ Nodes.slug = function() {
 		slug:'slug',
 		hide: false
 	});
+}
+
+Nodes.confirmProcess = function(confirmMessage) {
+	var action = $('#NodeAction :selected');
+	if (confirmMessage == undefined) {
+		confirmMessage = 'Are you sure?';
+	} else {
+		confirmMessage = confirmMessage.replace(/\%s/, action.text());
+	}
+	if (confirm(confirmMessage)) {
+		action.get(0).form.submit();
+	}
+	return false;
 }
 
 /**
