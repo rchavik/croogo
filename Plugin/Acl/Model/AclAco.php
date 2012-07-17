@@ -1,4 +1,7 @@
 <?php
+
+App::uses('AclNode', 'Model');
+
 /**
  * AclAco Model
  *
@@ -11,7 +14,7 @@
  * @license  http://www.opensource.org/licenses/mit-license.php The MIT License
  * @link     http://www.croogo.org
  */
-class AclAco extends AppModel {
+class AclAco extends AclNode {
 
 /**
  * name
@@ -34,4 +37,14 @@ class AclAco extends AppModel {
  */
 	public $actsAs = array('Tree');
 
+	public $alias = 'Aco';
+
+	public function getChildren($acoId) {
+		$fields = array('id', 'parent_id', 'alias');
+		$acos = $this->children($acoId, true, $fields);
+		foreach ($acos as &$aco) {
+			$aco[$this->alias]['children'] = $this->childCount($aco[$this->alias]['id'], true);
+		}
+		return $acos;
+	}
 }
