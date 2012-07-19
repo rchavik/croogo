@@ -16,6 +16,20 @@ class CroogoUpgradeShell extends AppShell {
  */
 	public function getOptionParser() {
 		return parent::getOptionParser()
+			->addSubCommand('acl', array(
+				'help' => __('Upgrade ACL database for core controllers.'),
+				'parser' => array(
+					'description' => __(
+	'Upgrades the ACO hierarchy from 1.3/1.4 so it follows the default ' .
+	'behavior in normal CakePHP applications. The primary difference is that ' .
+	'plugin controllers now are stored underneath its own Plugin ACO record, ' .
+	'whereas previous version assumes all Controllers belongs to the root ' .
+	'\'controllers\' node.' . $this->nl(2) . '<warning>' .
+	'Ensure that you have a backup of your aros, acos, and aros_acos table ' .
+	'before upgrading.</warning>'
+						),
+					),
+				))
 			->addSubCommand('settings', array(
 				'help' => __('Create settings.json from database'),
 				));
@@ -33,6 +47,19 @@ class CroogoUpgradeShell extends AppShell {
 			$this->out(__('<success>Config/settings.yml converted to settings.json</success>'));
 		} else {
 			$this->err(__('Config/settings.json already exist'));
+		}
+	}
+
+/**
+ * Upgrade ACL database
+ */
+	public function acl() {
+		App::uses('AclUpgrade', 'Acl.Utility');
+		$Upgrade = new AclUpgrade();
+		if (($result = $Upgrade->upgrade()) !== true) {
+			$this->err($result);
+		} else {
+			$this->out('<success>ACL Upgrade completed successfully</success>');
 		}
 	}
 
