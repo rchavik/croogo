@@ -68,6 +68,22 @@ class AclExtras extends Object {
  **/
 	public $_clean = false;
 
+
+/**
+ * array of output messages
+ */
+	public $output = array();
+
+/**
+ * array of error messages
+ */
+	public $errors = array();
+
+/**
+ * count of newly created ACOs
+ */
+	public $created = 0;
+
 /**
  * Start up And load Acl Component / Aco model
  *
@@ -85,6 +101,7 @@ class AclExtras extends Object {
 	}
 
 	public function out($msg) {
+		$this->output[] = $msg;
 		if (!empty($this->controller->Session)) {
 			$this->controller->Session->setFlash($msg);
 		} else {
@@ -93,6 +110,7 @@ class AclExtras extends Object {
 	}
 
 	public function err($msg) {
+		$this->errors[] = $msg;
 		if (!empty($this->controller->Session)) {
 			$this->controller->Session->setFlash($msg);
 		} else {
@@ -107,7 +125,7 @@ class AclExtras extends Object {
  **/
 	function aco_sync($params = array()) {
 		$this->_clean = true;
-		$this->aco_update($params);
+		return $this->aco_update($params);
 	}
 /**
  * Updates the Aco Tree with new controller actions.
@@ -132,7 +150,11 @@ class AclExtras extends Object {
 			$pluginRoot = $this->_checkNode($path, $plugin, $root['Aco']['id']);
 			$this->_updateControllers($pluginRoot, $controllers, $plugin);
 		}
-		$this->out(__('<success>Aco Update Complete</success>'));
+		if ($this->_clean) {
+			$this->out(__('<success>Aco Sync Complete</success>'));
+		} else {
+			$this->out(__('<success>Aco Update Complete</success>'));
+		}
 		return true;
 	}
 
@@ -196,11 +218,13 @@ class AclExtras extends Object {
  * @return array
  **/
 	function getControllerList($plugin = null) {
+		$excludes = array('CakeErrorController');
 		if (!$plugin) {
 			$controllers = App::objects('Controller', null, false);
 		} else {
 			$controllers = App::objects($plugin . '.Controller', null, false);
 		}
+		$controllers = array_diff($controllers, $excludes);
 		return $controllers;
 	}
 
@@ -218,6 +242,7 @@ class AclExtras extends Object {
 			$this->Aco->create(array('parent_id' => $parentId, 'model' => null, 'alias' => $alias));
 			$node = $this->Aco->save();
 			$node['Aco']['id'] = $this->Aco->id;
+			$this->created++;
 			$this->out(__('Created Aco node: %s', $path), 1, Shell::VERBOSE);
 		} else {
 			$node = $node[0];
@@ -234,9 +259,11 @@ class AclExtras extends Object {
  * @return void
  */
 	function _checkMethods($className, $controllerName, $node, $pluginPath = false) {
+		$excludes = array('securityError');
 		$baseMethods = get_class_methods('Controller');
 		$actions = get_class_methods($className);
 		$methods = array_diff($actions, $baseMethods);
+		$methods = array_diff($methods, $excludes);
 		foreach ($methods as $action) {
 			if (strpos($action, '_', 0) === 0) {
 				continue;
