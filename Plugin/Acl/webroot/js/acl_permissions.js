@@ -20,13 +20,13 @@ AclPermissions.templates = {
 </td>'),
 
 	toggleButton: _.template('\
-<td><img src="/img/icons/<%= icon %>" class="<%= classes.trim() %>" \
+<td><img src="<%= Croogo.basePath %>/img/icons/<%= icon %>" class="<%= classes.trim() %>" \
 		data-aro_id="<%= aroId %>" data-aco_id="<%= acoId %>"> \
 </td>'),
 
 	editLinks: _.template('<td> <%= edit %> <%= del %> <%= up %> <%= down %> </td>')
 
-}
+};
 
 /**
  * functions to execute when document is ready
@@ -37,7 +37,7 @@ AclPermissions.documentReady = function() {
 	AclPermissions.permissionToggle();
 	AclPermissions.tableToggle();
 	$('tr:has(div.controller)').addClass('controller-row');
-}
+};
 
 /**
  * Toggle permissions (enable/disable)
@@ -66,7 +66,7 @@ AclPermissions.permissionToggle = function() {
 
 		return false;
 	});
-}
+};
 
 /**
  * Toggle table rows (collapsible)
@@ -82,11 +82,11 @@ AclPermissions.tableToggle = function() {
 		var id = $el.data('id');
 		for (var acoId in data.permissions) {
 			text = '<td>' + acoId + '</td>';
-			var aliases = data.permissions[acoId]
+			var aliases = data.permissions[acoId];
 			for (var alias in aliases) {
-				var aco = aliases[alias]
-				var children = aco['children']
-				var classes = children > 0 ? 'controller expand' : ''
+				var aco = aliases[alias];
+				var children = aco['children'];
+				var classes = children > 0 ? 'controller expand' : '';
 				classes += " level-" + data.level;
 				text += AclPermissions.templates.controllerCell({
 					id: acoId,
@@ -113,7 +113,7 @@ AclPermissions.tableToggle = function() {
 		var $row = $el.parents('tr');
 		$(rows).insertAfter($row);
 		$el.removeClass('loading');
-	}
+	};
 
 	// create table cells for role permissions
 	var renderRoles = function(aros, acoId, roles) {
@@ -143,7 +143,7 @@ AclPermissions.tableToggle = function() {
 			text += AclPermissions.templates.toggleButton(cell);
 		}
 		return text;
-	}
+	};
 
 	$('.permission-table').on('click', '.controller', function() {
 		var $el = $(this);
@@ -170,7 +170,7 @@ AclPermissions.tableToggle = function() {
 			params = $.extend(params, {
 				urls: true,
 				perms: false
-			})
+			});
 		}
 
 		var url = Croogo.basePath + 'admin/acl/acl_permissions/index/';
@@ -178,7 +178,7 @@ AclPermissions.tableToggle = function() {
 			renderPermissions.call($el[0], data, textStatus);
 		});
 	});
-}
+};
 
 /**
  * document ready
