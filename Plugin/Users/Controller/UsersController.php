@@ -202,7 +202,7 @@ class UsersController extends UsersAppController {
 		if ($this->request->is('post')) {
 			if ($this->Auth->login()) {
 				Croogo::dispatchEvent('Controller.Users.adminLoginSuccessful', $this);
-			 	$this->redirect($this->Auth->redirect());
+				$this->redirect($this->Auth->redirect());
 			} else {
 				Croogo::dispatchEvent('Controller.Users.adminLoginFailure', $this);
 				$this->Session->setFlash($this->Auth->authError, 'default', array(), 'auth');
