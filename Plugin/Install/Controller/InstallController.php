@@ -161,7 +161,7 @@ class InstallController extends Controller {
 		}
 
 		if (copy(APP . 'Config' . DS . 'croogo.php.install', APP . 'Config' . DS . 'croogo.php')) {
-	 		$this->redirect(array('action' => 'data'));
+			$this->redirect(array('action' => 'data'));
 		} else {
 			$this->Session->setFlash(__('Could not write croogo.php file.'), 'default', array('class' => 'error'));
 		}
