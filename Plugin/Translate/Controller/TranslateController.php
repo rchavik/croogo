@@ -49,11 +49,13 @@ class TranslateController extends TranslateAppController {
 			));
 		}
 
-		if (!is_array(Configure::read('Translate.models.' . $modelAlias))) {
+		$config = Configure::read('Translate.models.' . $modelAlias);
+		if (!is_array($config)) {
 			$this->Session->setFlash(__('Invalid model.'), 'default', array('class' => 'error'));
+			list($plugin, $model) = pluginSplit($config['translateModel']);
 			$this->redirect(array(
-				'plugin' => null,
-				'controller' => Inflector::pluralize($modelAlias),
+				'plugin' => $plugin,
+				'controller' => $model,
 				'action' => 'index',
 			));
 		}
@@ -108,7 +110,8 @@ class TranslateController extends TranslateAppController {
 				'action' => 'index',
 			));
 		}
-
+		$config = Configure::read('Translate.models.' . $modelAlias);
+		list($plugin, $translateModel) = pluginSplit($config['translateModel']);
 		$language = $this->Language->find('first', array(
 			'conditions' => array(
 				'Language.alias' => $this->params['named']['locale'],
@@ -118,19 +121,19 @@ class TranslateController extends TranslateAppController {
 		if (!isset($language['Language']['id'])) {
 			$this->Session->setFlash(__('Invalid Language'), 'default', array('class' => 'error'));
 			$this->redirect(array(
-				'plugin' => null,
-				'controller' => Inflector::pluralize($modelAlias),
+				'plugin' => $plugin,
+				'controller' => Inflector::pluralize($translateModel),
 				'action' => 'index',
 			));
 		}
 
-		$model =& ClassRegistry::init($modelAlias);
+		$model = ClassRegistry::init($config['translateModel']);
 		$record = $model->findById($id);
 		if (!isset($record[$modelAlias]['id'])) {
 			$this->Session->setFlash(__('Invalid record.'), 'default', array('class' => 'error'));
 			$this->redirect(array(
-				'plugin' => null,
-				'controller' => Inflector::pluralize($modelAlias),
+				'plugin' => $plugin,
+				'controller' => $translateModel,
 				'action' => 'index',
 			));
 		}
