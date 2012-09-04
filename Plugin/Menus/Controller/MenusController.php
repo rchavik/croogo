@@ -59,7 +59,11 @@ class MenusController extends MenusAppController {
 			$this->Menu->create();
 			if ($this->Menu->save($this->request->data)) {
 				$this->Session->setFlash(__('The Menu has been saved'), 'default', array('class' => 'success'));
-				$this->redirect(array('action' => 'index'));
+				if (isset($this->request->data['apply'])) {
+					$this->redirect(array('action' => 'edit', $this->Menu->id));
+				} else {
+					$this->redirect(array('action' => 'index'));
+				}
 			} else {
 				$this->Session->setFlash(__('The Menu could not be saved. Please, try again.'), 'default', array('class' => 'error'));
 			}
@@ -83,7 +87,11 @@ class MenusController extends MenusAppController {
 		if (!empty($this->request->data)) {
 			if ($this->Menu->save($this->request->data)) {
 				$this->Session->setFlash(__('The Menu has been saved'), 'default', array('class' => 'success'));
-				$this->redirect(array('action' => 'index'));
+				if (isset($this->request->data['apply'])) {
+					$this->redirect(array('action' => 'edit', $this->Menu->id));
+				} else {
+					$this->redirect(array('action' => 'index'));
+				}
 			} else {
 				$this->Session->setFlash(__('The Menu could not be saved. Please, try again.'), 'default', array('class' => 'error'));
 			}
