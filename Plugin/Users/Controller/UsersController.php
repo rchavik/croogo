@@ -44,7 +44,6 @@ class UsersController extends UsersAppController {
 	public $presetVars = array(
 		'name' => array('type' => 'value'),
 		'role_id' => array('type' => 'lookup', 'formField' => 'role_input', 'modelField' => 'title', 'model' => 'Role')
-	//	'roles' => array('type' => 'value'),
 	);
 
 /**

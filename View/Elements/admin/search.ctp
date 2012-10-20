@@ -37,7 +37,6 @@ if (isset($searchFields) && $searchFields != array()):
 		echo $out;
 	}
 
-	//echo $this->Html->link('Clear', array('action' => 'index'), array('class' => 'button'));
 	echo $this->Form->end(__('Filter'));
 ?>
 <div class="clear">&nbsp;</div>
