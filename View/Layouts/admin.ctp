@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-		<meta charset="utf-8">
+		<meta charset="utf-8" name="viewport" content="width=device-width"> <!-- make iOS detect responsive-->
 		<title><?php echo $title_for_layout; ?> - <?php echo __('Croogo'); ?></title>
 		<?php
 
