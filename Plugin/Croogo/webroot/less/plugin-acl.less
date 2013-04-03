@@ -1,14 +1,17 @@
 
-img.permission-toggle:hover { cursor: pointer; }
-img.hook-toggle:hover { cursor: pointer; }
+.permission-toggle {
+	&:hover { cursor: pointer; }
+	&.permission-disabled {
+		color: @gray;
+		cursor: text;
+	}
+}
 
 .perm-collapse {
-	background: url('../img/icons/bullet_arrow_down.png') no-repeat;
 	padding-left: 15px;
 }
 
 .perm-expand {
-	background: url('../img/icons/bullet_arrow_right.png') no-repeat;
 	padding-left: 15px;
 }
 
@@ -22,10 +25,6 @@ td {
 
 	&:hover {
 		cursor: pointer;
-	}
-
-	&.loading {
-		background: url('../img/ajax/circle_ball.gif') no-repeat scroll 100% 0 transparent;
 	}
 }
 
@@ -43,6 +42,10 @@ td {
 	&.level-1 {
 		background: @grayLight;
 		color: #f1f1f1;
+	}
+
+	td {
+		border-top: 1px solid #7e7e7e;
 	}
 }
 
