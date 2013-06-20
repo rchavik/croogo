@@ -112,7 +112,7 @@ class NodesComponent extends Component {
  * @return void
  */
 
-	public function _hookLinkChoosers(Controller $controller){
+	protected function _hookLinkChoosers(Controller $controller){
 
 			$type = ClassRegistry::init('Taxonomy.Type');
 			$types = $type->find('list',array('fields'=>array('alias','title')));
@@ -120,7 +120,7 @@ class NodesComponent extends Component {
 			$linkChoosers = array();
 			foreach($types as $alias => $type){
 				$linkChoosers[$type] = array(
-					'route'=>array(
+					'url'=>array(
 						'plugin'=>'nodes',
 						'controller'=>'nodes',
 						'action'=>'index',
