@@ -256,21 +256,23 @@ class MenusHelper extends AppHelper {
  * @return string
  */
 
-	public function linkChoosers(){
+	public function linkChooserDialog(){
 
-		$html = '<div class="btn-group"><a href="#" class="btn btn-primary"><i class="icon-link"></i></a>';
+		$this->Html->css('Menus.linkchoosers',null,array('inline'=>false));
+
+        $html = '<div id="link_choosers" role="dialog" class="modal hide fade">';
+        $html .= '<div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button><h3>Link Choosers</h3></div>';
+        $html .= '<div class="modal-body">';
 
 		$linkChoosers = Configure::read('Menus.linkChoosers');
 		foreach($linkChoosers as $name => $chooser){
-			$html .= $this->Html->link(__d('croogo', $name), $chooser['url'],
-			array(
-				'class' => 'btn link chooser',
-			)
-			);
+            $html .= '<div class="link_chooser">';
+            $html .= '<div class="pull-left"><h5>'.$name.'</h5><p>'.$chooser["description"].'</p></div>';
+            $html .= '<a href="'.$this->Html->url($chooser['url']).'" class="btn link chooser pull-right" data-dismiss="modal">'.__d('croogo','Link to '.$name).'</a>';
+			$html .= '<div class="clearfix"></div></div>';
 		}
 
-		$html .= '</div>';
-
+        $html .= '</div></div>';
 		return $html;
 
 	}
