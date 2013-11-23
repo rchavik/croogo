@@ -11,30 +11,19 @@
 <thead>
 	<?php echo $tableHeaders; ?>
 </thead>
-<?php	
+<?php
 	$rows = array();
-	
-	// Default Content Type
-	if(isset($vocabulary['Type'][0])){
-		$defaultType = $vocabulary['Type'][0];
-	}
-	if(isset($this->params->query['type_id'])){
-		if(isset($vocabulary['Type'][$this->params->query['type_id']])){
-			$defaultType = $vocabulary['Type'][$this->params->query['type_id']];
-		}
-	}
-	
 
 	foreach ($termsTree as $id => $title):
 
 		// Title Column
 		$titleCol = $title;
-		if(isset($defaultType['alias'])){
+		if(isset($this->params->query['type'])){
 			$titleCol = $this->Html->link($title,array(
 			'plugin'=>'nodes',
 			'controller'=>'nodes',
 			'action'=>'term',
-			'type'=>$defaultType['alias'],
+			'type'=>$this->params->query['type'],
 			'slug'=>$terms[$id]['slug'],
 			'admin'=>0
 			),array(
@@ -46,7 +35,7 @@
 					'nodes',
 					'nodes',
 					'term',
-					$defaultType['alias'],
+					$this->params->query['type'],
 					$terms[$id]['slug']
 					),
 			));
