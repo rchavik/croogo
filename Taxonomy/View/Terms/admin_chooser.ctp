@@ -15,24 +15,24 @@
 
 	// Default Content Type
 	if (isset($vocabulary['Type'][0])) {
-		$defaultType = $vocabulary['Type'][0];
+		$type = $vocabulary['Type'][0]['alias'];
 	}
-	if (isset($this->params->query['type_id'])) {
-		if (isset($vocabulary['Type'][$this->params->query['type_id']])) {
-			$defaultType = $vocabulary['Type'][$this->params->query['type_id']];
-		}
+
+	// Passed Content Type
+	if (isset($this->params->query['type'])) {
+		$type = $this->params->query['type'];
 	}
 
 	foreach ($termsTree as $id => $title):
 
 		// Title Column
 		$titleCol = $title;
-		if (isset($defaultType['alias'])) {
+		if (isset($type)) {
 			$titleCol = $this->Html->link($title, array(
 				'plugin' => 'nodes',
 				'controller' => 'nodes',
 				'action' => 'term',
-				'type' => $defaultType['alias'],
+				'type' => $type,
 				'slug' => $terms[$id]['slug'],
 				'admin' => false
 			), array(
@@ -44,7 +44,7 @@
 					'nodes',
 					'nodes',
 					'term',
-					$defaultType['alias'],
+					$type,
 					$terms[$id]['slug']
 				),
 			));
