@@ -30,7 +30,7 @@ class RegionsHelper extends AppHelper {
 			return true;
 		}
 	}
-	
+
 /**
  * Show Block
  *
@@ -111,6 +111,7 @@ class RegionsHelper extends AppHelper {
  * @return string
  */
 	public function blocks($regionAlias, $options = array()) {
+		$cache = false;
 		$output = '';
 		if ($this->isEmpty($regionAlias)) {
 			return $output;
@@ -122,8 +123,20 @@ class RegionsHelper extends AppHelper {
 
 		$defaultElement = 'Blocks.block';
 		$blocks = $this->_View->viewVars['blocks_for_layout'][$regionAlias];
+
+		if (isset($options['elementOptions']['cache'])) {
+			$cache = true;
+			$regionKey = 'cached_' . $regionAlias;
+			if (isset($options['elementOptions']['cache']['key'])) {
+				$regionKey = $options['elementOptions']['cache']['key'];
+			}
+		}
 		foreach ($blocks as $block) {
-			$output .= $this->block($block['Block']['alias'], $options);
+			if ($cache) {
+				$blockOption = $options;
+				$blockOptions['elementOptions']['key'] = $regionKey . '_' . $block['Block']['alias'];
+			}
+			$output .= $this->block($block['Block']['alias'], $blockOptions);
 		}
 
 		return $output;
