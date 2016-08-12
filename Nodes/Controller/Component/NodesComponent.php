@@ -95,7 +95,7 @@ class NodesComponent extends Component {
 				'limit' => $options['limit'],
 				'cache' => array(
 					'prefix' => 'nodes_' . $alias,
-					'config' => 'croogo_nodes',
+					'config' => 'nodes',
 				),
 			));
 			$this->nodesForLayout[$alias] = $node;
