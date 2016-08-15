@@ -59,6 +59,10 @@ class AliasableBehavior extends ModelBehavior {
 			'conditions' => array(
 				$model->alias . '.' . $config['alias'] . ' != ' => '',
 			),
+			'cache' => array(
+				'name' => 'aliasable_by_' . $config['alias'],
+				'config' => 'nodes',
+			),
 		));
 		$this->_byAlias[$model->alias] = array_flip($this->_byIds[$model->alias]);
 	}
