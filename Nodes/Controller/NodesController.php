@@ -739,10 +739,15 @@ class NodesController extends NodesAppController {
 					'config' => 'nodes_view',
 				),
 			));
+			$slug = $this->request->param('named.slug');
 			$node = $Node->find('viewBySlug', array(
-				'slug' => $this->request->params['named']['slug'],
+				'slug' => $slug,
 				'type' => $this->request->params['named']['type'],
 				'roleId' => $this->Croogo->roleId(),
+				'cache' => array(
+					'name' => 'view_slug_' . sha1($slug),
+					'config' => 'nodes_view',
+				),
 			));
 		} elseif ($id == null) {
 			$this->Session->setFlash(__d('croogo', 'Invalid content'), 'flash', array('class' => 'error'));
