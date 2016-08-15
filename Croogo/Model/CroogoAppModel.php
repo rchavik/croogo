@@ -70,7 +70,7 @@ class CroogoAppModel extends Model {
 	public function find($type = 'first', $options = array()) {
 		if ($this->useCache) {
 			$cachedResults = $this->_findCached($type, $options);
-			if ($cachedResults) {
+			if ($cachedResults !== false) {
 				return $cachedResults;
 			}
 		}
@@ -112,10 +112,7 @@ class CroogoAppModel extends Model {
 
 		$cacheName .= '_' . Configure::read('Config.language');
 		$results = Cache::read($cacheName, $options['cache']['config']);
-		if ($results) {
-			return $results;
-		}
-		return false;
+		return $results;
 	}
 
 /**
