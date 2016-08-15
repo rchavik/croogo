@@ -113,10 +113,20 @@ class CroogoStatus implements ArrayAccess {
 				$Permission = ClassRegistry::init('Permission');
 			}
 			try {
-				$allow = $Permission->check(
-					array('model' => 'Role', 'foreign_key' => $roleId),
-					'controllers/Nodes/Nodes/admin_edit'
-				);
+				$permKey = 'perm_default_status_' . $roleId;
+				$perm = Cache::read($permKey, 'permissions');
+				if ($perm === false) {
+					$allow = $Permission->check(
+						array('model' => 'Role', 'foreign_key' => $roleId),
+						'controllers/Nodes/Nodes/admin_edit'
+					);
+					Cache::write($permKey, array(
+						'role_id' => $roleId,
+						'allowed' => $allow,
+					), 'permissions');
+				} else {
+					$allow = $perm['allowed'];
+				}
 			} catch (CakeException $e) {
 				CakeLog::error($e->getMessage());
 			}
